@@ -49,6 +49,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
+    //variables that are used in ui do display current data
     private var temperature by mutableStateOf(0f)
     private var humidity by mutableStateOf(0f)
     private var pressure by mutableStateOf(0)
@@ -61,9 +62,10 @@ class MainActivity : ComponentActivity() {
     private var isSaveLuminosity = true
     private var howOftenSave = 30f
 
-    //Sensors
+    //implementation of SernsorEventListener protocol
     private val sensorEventListener: SensorEventListener = object: SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
+            //define type of sensor and assign value to specific variable
             if (event?.sensor?.type == Sensor.TYPE_AMBIENT_TEMPERATURE) {
                 temperature = event.values[0]
             } else if (event?.sensor?.type == Sensor.TYPE_RELATIVE_HUMIDITY) {
@@ -84,6 +86,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
+            //sensor registration
             val context = LocalContext.current
             val sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             val temperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
@@ -111,6 +114,8 @@ class MainActivity : ComponentActivity() {
     // this called after child activity finishes.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        //request code 0 means transition from settings screen
+        //then read result data and update it
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 // Get the result from intent
@@ -167,6 +172,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 IconButton(onClick = {
+                    //when settings button click create intent and pass all data
                     val intent = Intent(context, Settings::class.java)
                     intent.putExtra("isSaveTemperature", isSaveTemperature)
                     intent.putExtra("isSaveHumidity", isSaveHumidity)

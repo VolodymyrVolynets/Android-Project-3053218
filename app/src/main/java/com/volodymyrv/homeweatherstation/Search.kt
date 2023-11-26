@@ -103,6 +103,7 @@ fun SearchScreen() {
     }
 }
 
+//Data picker composable function
 @Composable
 fun DatePicker(context: Context, datePicked: Boolean, onDateSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()

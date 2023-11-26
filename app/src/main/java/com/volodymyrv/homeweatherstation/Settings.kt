@@ -40,6 +40,7 @@ import com.volodymyrv.homeweatherstation.ui.theme.HomeWeatherStationTheme
 
 class Settings : ComponentActivity() {
 
+    //setting variables
     private var isSaveTemperature by mutableStateOf(true)
     private var isSaveHumidity by mutableStateOf(true)
     private var isSavePressure by mutableStateOf(true)
@@ -51,11 +52,13 @@ class Settings : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            //gets data from intent
             isSaveTemperature = intent.getBooleanExtra("isSaveTemperature", true)
             isSaveHumidity = intent.getBooleanExtra("isSaveHumidity", true)
             isSavePressure = intent.getBooleanExtra("isSavePressure", true)
             isSaveLuminosity = intent.getBooleanExtra("isSaveLuminosity", true)
             howOftenSave = intent.getFloatExtra("howOftenSave", 30f)
+
             HomeWeatherStationTheme {
                 // A surface container using the 'background' color from the theme
                 Scaffold(
@@ -150,6 +153,7 @@ class Settings : ComponentActivity() {
         TopAppBar(
             title = { Text("Settings") },
             actions = {
+                //if back button clicked create intent and pass data back
                 IconButton(onClick = {
                     if (context is ComponentActivity) {
                         val intent = Intent()
