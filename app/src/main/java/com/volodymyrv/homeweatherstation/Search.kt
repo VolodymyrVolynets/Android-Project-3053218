@@ -11,6 +11,7 @@ import android.util.Log
 import android.widget.DatePicker
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.volodymyrv.homeweatherstation.ui.theme.HomeWeatherStationTheme
@@ -115,7 +117,7 @@ fun SearchScreen(context: Context) {
             }.start()
 
             for (i in data) {
-                Column {
+                Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
                     Row {
                         Text(text = i.sensorType)
                         Text(text = i.dateTime.toString())
