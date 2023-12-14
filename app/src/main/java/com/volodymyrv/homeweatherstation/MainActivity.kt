@@ -2,7 +2,6 @@
 
 package com.volodymyrv.homeweatherstation
 
-import android.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -12,8 +11,6 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -42,7 +39,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.lifecycleScope
 import com.volodymyrv.homeweatherstation.ui.theme.HomeWeatherStationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -158,6 +154,7 @@ class MainActivity : ComponentActivity() {
 
         startSavingTask()
 
+
         setContent {
 
             val preferencesManager = PreferencesManager(this)
@@ -202,8 +199,6 @@ class MainActivity : ComponentActivity() {
                 isSavePressure = data.getBooleanExtra("isSavePressure", true)
                 isSaveLuminosity = data.getBooleanExtra("isSaveLuminosity", true)
                 howOftenSave = data.getFloatExtra("howOftenSave", 30f)
-
-                startSavingTask()
             }
         }
     }

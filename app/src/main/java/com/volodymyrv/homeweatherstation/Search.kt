@@ -7,13 +7,19 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.DatePicker
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
@@ -30,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,7 +57,7 @@ class Search : ComponentActivity() {
                     topBar = { MyAppTopBar() }
                 ) {
                     Box(modifier = Modifier.padding(it)) {
-                        SearchScreen()
+                        SearchScreen(LocalContext.current)
                     }
                 }
             }
@@ -77,7 +84,7 @@ private fun MyAppTopBar() {
 }
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(context: Context) {
     val context = LocalContext.current
     var datePicked by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf("") }
@@ -98,7 +105,24 @@ fun SearchScreen() {
         }
 
         if (datePicked) {
-            Text("No data found for $selectedDate")
+            val data = remember { mutableStateListOf<SensorDataEntity>() }
+            Thread {
+                val db = AppDatabase.getDatabase(context)
+                val dataList: List<SensorDataEntity> = db.sensorDataDao().getAll()
+                for (i in dataList) {
+                    data.add(i)
+                }
+            }.start()
+
+            for (i in data) {
+                Column {
+                    Row {
+                        Text(text = i.sensorType)
+                        Text(text = i.dateTime.toString())
+                        Text(text = i.value.toString())
+                    }
+                }
+            }
         }
     }
 }

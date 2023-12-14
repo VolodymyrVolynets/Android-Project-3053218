@@ -13,5 +13,8 @@ interface SensorDataDao {
     @Query("SELECT * FROM SensorDataEntity WHERE date(dateTime) = date(:date) AND sensorType = :sensorType")
     fun getSensorDataForSpecificDay(date: Date, sensorType: String): List<SensorDataEntity>
 
+    @Query("SELECT * FROM SensorDataEntity")
+    fun getAll(): List<SensorDataEntity>
+
     // Other necessary queries
 }
