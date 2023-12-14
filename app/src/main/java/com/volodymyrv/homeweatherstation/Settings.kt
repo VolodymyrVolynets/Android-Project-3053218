@@ -52,6 +52,8 @@ class Settings : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val preferencesManager = PreferencesManager(this)
+
             //gets data from intent
             isSaveTemperature = intent.getBooleanExtra("isSaveTemperature", true)
             isSaveHumidity = intent.getBooleanExtra("isSaveHumidity", true)
@@ -80,6 +82,7 @@ class Settings : ComponentActivity() {
                                 
                                 Switch(checked = isSaveTemperature, onCheckedChange = {
                                     isSaveTemperature = it
+                                    preferencesManager.saveSettings(isSaveTemperature, isSaveHumidity, isSavePressure, isSaveLuminosity, howOftenSave)
                                 })
                             }
 
@@ -93,6 +96,7 @@ class Settings : ComponentActivity() {
 
                                 Switch(checked = isSaveHumidity, onCheckedChange = {
                                     isSaveHumidity = it
+                                    preferencesManager.saveSettings(isSaveTemperature, isSaveHumidity, isSavePressure, isSaveLuminosity, howOftenSave)
                                 })
                             }
 
@@ -106,6 +110,7 @@ class Settings : ComponentActivity() {
 
                                 Switch(checked = isSavePressure, onCheckedChange = {
                                     isSavePressure = it
+                                    preferencesManager.saveSettings(isSaveTemperature, isSaveHumidity, isSavePressure, isSaveLuminosity, howOftenSave)
                                 })
                             }
 
@@ -119,6 +124,7 @@ class Settings : ComponentActivity() {
 
                                 Switch(checked = isSaveLuminosity, onCheckedChange = {
                                     isSaveLuminosity = it
+                                    preferencesManager.saveSettings(isSaveTemperature, isSaveHumidity, isSavePressure, isSaveLuminosity, howOftenSave)
                                 })
                             }
 
@@ -129,7 +135,10 @@ class Settings : ComponentActivity() {
                                 Text("How often save data on your devise: ${howOftenSave.toInt()}S")
                                 Slider(
                                     value = howOftenSave,
-                                    onValueChange = { howOftenSave = it },
+                                    onValueChange = {
+                                        howOftenSave = it
+                                        preferencesManager.saveSettings(isSaveTemperature, isSaveHumidity, isSavePressure, isSaveLuminosity, howOftenSave)
+                                                    },
                                     colors = SliderDefaults.colors(
                                         thumbColor = MaterialTheme.colorScheme.secondary,
                                         activeTrackColor = MaterialTheme.colorScheme.secondary,

@@ -62,6 +62,15 @@ class MainActivity : ComponentActivity() {
     private var isSaveLuminosity = true
     private var howOftenSave = 30f
 
+    private fun loadSettings(preferencesManager: PreferencesManager) {
+        val settings = preferencesManager.loadSettings()
+        isSaveTemperature = settings.isSaveTemperature
+        isSaveHumidity = settings.isSaveHumidity
+        isSavePressure = settings.isSavePressure
+        isSaveLuminosity = settings.isSaveLuminosity
+        howOftenSave = settings.howOftenSave
+    }
+
     //implementation of SernsorEventListener protocol
     private val sensorEventListener: SensorEventListener = object: SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
@@ -85,6 +94,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
+            val preferencesManager = PreferencesManager(this)
+            loadSettings(preferencesManager)
 
             //sensor registration
             val context = LocalContext.current
