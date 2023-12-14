@@ -11,7 +11,7 @@ interface SensorDataDao {
     suspend fun insertSensorData(sensorData: SensorDataEntity)
 
     @Query("SELECT * FROM SensorDataEntity WHERE date(dateTime) = date(:date) AND sensorType = :sensorType")
-    suspend fun getSensorDataForSpecificDay(date: Date, sensorType: String): List<SensorDataEntity>
+    fun getSensorDataForSpecificDay(date: Date, sensorType: String): List<SensorDataEntity>
 
     // Other necessary queries
 }

@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -48,7 +49,6 @@ android {
         }
     }
 }
-
 dependencies {
 
     implementation("androidx.compose.material:material:1.5.4")
@@ -63,8 +63,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation("androidx.room:room-common:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -74,4 +73,14 @@ dependencies {
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+//    implementation("androidx.room:room-runtime:2.4.0") // use the latest version
+//    annotationProcessor("androidx.room:room-compiler:2.4.0") // use the latest version
+
+    implementation("androidx.room:room-runtime:2.4.2")
+    ksp("androidx.room:room-compiler:2.4.2")
+    implementation("androidx.room:room-ktx:2.4.2")
+    implementation("androidx.room:room-paging:2.4.2")
+//    implementation "android.arch.persistence.room:runtime:1.0.0"
+//    kapt("android.arch.persistence.room:compiler:2.4.0")
 }

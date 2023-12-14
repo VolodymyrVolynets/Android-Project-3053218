@@ -44,16 +44,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.volodymyrv.homeweatherstation.ui.theme.HomeWeatherStationTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.Date
 
 
 class MainActivity : ComponentActivity() {
 
+    private lateinit var database: AppDatabase
+    private var saveJob: Job? = null
+    private val activityScope = CoroutineScope(Dispatchers.Main)
+
+
     //variables that are used in ui do display current data
     private var temperature by mutableStateOf(0f)
     private var humidity by mutableStateOf(0f)
-    private var pressure by mutableStateOf(0)
-    private var luminosity by mutableStateOf(0)
+    private var pressure by mutableStateOf(0f)
+    private var luminosity by mutableStateOf(0f)
 
     //variable are not used in UI
     private var isSaveTemperature = true
@@ -80,9 +91,9 @@ class MainActivity : ComponentActivity() {
             } else if (event?.sensor?.type == Sensor.TYPE_RELATIVE_HUMIDITY) {
                 humidity = event.values[0]
             } else if (event?.sensor?.type == Sensor.TYPE_PRESSURE) {
-                pressure = event.values[0].toInt()
+                pressure = event.values[0]
             } else if (event?.sensor?.type == Sensor.TYPE_LIGHT) {
-                luminosity = event.values[0].toInt()
+                luminosity = event.values[0]
             }
         }
 
@@ -90,9 +101,63 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun startSavingTask() {
+        // Cancel any existing job
+        saveJob?.cancel()
+
+        // Start a new saving task
+        saveJob = activityScope.launch {
+            while (isActive) {
+                if (isSaveTemperature) {
+                    database.sensorDataDao().insertSensorData(
+                        SensorDataEntity(
+                            dateTime = Date(),
+                            sensorType = "Temperature",
+                            value = temperature
+                        )
+                    )
+                }
+                if (isSaveHumidity) {
+                    database.sensorDataDao().insertSensorData(
+                        SensorDataEntity(
+                            dateTime = Date(),
+                            sensorType = "Humidity",
+                            value = humidity
+                        )
+                    )
+                }
+                if (isSavePressure) {
+                    database.sensorDataDao().insertSensorData(
+                        SensorDataEntity(
+                            dateTime = Date(),
+                            sensorType = "Pressure",
+                            value = pressure
+                        )
+                    )
+                }
+                if (isSaveLuminosity) {
+                    database.sensorDataDao().insertSensorData(
+                        SensorDataEntity(
+                            dateTime = Date(),
+                            sensorType = "Luminosity",
+                            value = luminosity
+                        )
+                    )
+                }
+
+                delay(howOftenSave.toLong() * 1000L)
+            }
+        }
+    }
+
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        database = AppDatabase.getDatabase(this)
+
+        startSavingTask()
+
         setContent {
 
             val preferencesManager = PreferencesManager(this)
@@ -137,12 +202,14 @@ class MainActivity : ComponentActivity() {
                 isSavePressure = data.getBooleanExtra("isSavePressure", true)
                 isSaveLuminosity = data.getBooleanExtra("isSaveLuminosity", true)
                 howOftenSave = data.getFloatExtra("howOftenSave", 30f)
+
+                startSavingTask()
             }
         }
     }
 
     @Composable
-    private fun MainScreen(temperature: Float, humidity: Float, pressure: Int, luminosity: Int) {
+    private fun MainScreen(temperature: Float, humidity: Float, pressure: Float, luminosity: Float) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top
